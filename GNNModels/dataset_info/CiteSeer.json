@@ -1,0 +1,15 @@
+{
+    "Name": "CiteSeer",
+    "Source": "torch_geometric.datasets",
+    "Number of graphs": 1,
+    "Number of features": 3703,
+    "Number of classes": 6,
+    "Number of nodes": 3327,
+    "Number of edges": 9104,
+    "Average node degree": 2.7363991584009617,
+    "Number of training nodes": 120,
+    "Training node label rate": 0.03606853020739405,
+    "Has isolated nodes": true,
+    "Has self-loops": false,
+    "Is undirected": true
+}

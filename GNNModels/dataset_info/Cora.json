@@ -1,0 +1,15 @@
+{
+    "Name": "Cora",
+    "Source": "torch_geometric.datasets",
+    "Number of graphs": 1,
+    "Number of features": 1433,
+    "Number of classes": 7,
+    "Number of nodes": 2708,
+    "Number of edges": 10556,
+    "Average node degree": 3.8980797636632203,
+    "Number of training nodes": 140,
+    "Training node label rate": 0.051698670605613,
+    "Has isolated nodes": false,
+    "Has self-loops": false,
+    "Is undirected": true
+}

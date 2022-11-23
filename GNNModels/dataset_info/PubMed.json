@@ -1,0 +1,15 @@
+{
+    "Name": "PubMed",
+    "Source": "torch_geometric.datasets",
+    "Number of graphs": 1,
+    "Number of features": 500,
+    "Number of classes": 3,
+    "Number of nodes": 19717,
+    "Number of edges": 88648,
+    "Average node degree": 4.496018664096972,
+    "Number of training nodes": 60,
+    "Training node label rate": 0.0030430592889384793,
+    "Has isolated nodes": false,
+    "Has self-loops": false,
+    "Is undirected": true
+}
