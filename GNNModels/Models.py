@@ -87,7 +87,7 @@ def get_trained_model_menu():
     # implement a print for a menu which shows avialble weights of trained models and corresponding datasets and type (graph or node classif)
     return
 
-def get_model_pretrained(model_name,dataset_name):
+def get_model_pretrained(model_name,dataset_name,path=''):
     '''
         model_name = 'GCN', 'GAT' for graph classification
         dataset_name = Cora
@@ -113,21 +113,24 @@ def get_model_pretrained(model_name,dataset_name):
         print("Available Datasets : ",['GAT','GCN','GCN_3L','GNNGraphConv'])
         return None
 
+    if path=='':
+        path='checkpoints/'
+
     if(model_name=='GAT'):
         model=GAT(hidden_channels=8, num_features=Datasets_specs[dataset_name]['num_features'],num_classes=Datasets_specs[dataset_name]['num_classes'],heads=8)
-        model.load_state_dict(torch.load('checkpoints/GAT_{}_epochs=300.pt'.format(dataset_name)))
+        model.load_state_dict(torch.load('{}GAT_{}_epochs=300.pt'.format(path,dataset_name)))
         model.eval()
     elif(model_name=='GCN'):
         model=GCN(hidden_channels=16, num_features=Datasets_specs[dataset_name]['num_features'],num_classes=Datasets_specs[dataset_name]['num_classes'])
-        model.load_state_dict(torch.load('checkpoints/GCN_{}_epochs=300.pt'.format(dataset_name)))
+        model.load_state_dict(torch.load('{}GCN_{}_epochs=300.pt'.format(path,dataset_name)))
         model.eval()
     elif(model_name=='GCN_3L'):
         model=GCN_3L(hidden_channels=64, num_features=Datasets_specs[dataset_name]['num_features'],num_classes=Datasets_specs[dataset_name]['num_classes'])
-        model.load_state_dict(torch.load('checkpoints/GCN_3L_{}_epochs=300.pt'.format(dataset_name)))
+        model.load_state_dict(torch.load('{}GCN_3L_{}_epochs=300.pt'.format(path,dataset_name)))
         model.eval()
     elif(model_name=='GNNGraphConv'):
         model=GNNGraphConv(hidden_channels=64, num_features=Datasets_specs[dataset_name]['num_features'],num_classes=Datasets_specs[dataset_name]['num_classes'])
-        model.load_state_dict(torch.load('checkpoints/GNNGraphConv_{}_epochs=300.pt'.format(dataset_name)))
+        model.load_state_dict(torch.load('{}GNNGraphConv_{}_epochs=300.pt'.format(path,dataset_name)))
         model.eval()
     
     return model
