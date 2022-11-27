@@ -2,33 +2,19 @@
 
 ## Plan Outline and Current Status
 
-- [ ] ***Node Classification***
-    - [x] Models 
-        - GCN
-        - GAT 
-    - [x] Datasets
-        - Cora
-        - PubMed : Facing issues while generating explanations the dataset is very larg
-        - CiteSeer
+### **Node Classification**
+| Task      | Code/Work |
+| ----------- | ----------- |
+| Metrics      | Hub,Auth,NodeImp all done based on Jaccard |
+| Explanations      | Done for pgm,pge,cam,gradcam,ig,gnn |
 
-- [ ] ***Graph Classification***
-    - [x] Models
-        - GCN_3L
-        - GNNGraphConv
-    - [x] Datasets
-        - MUTAG
-        - PROTIENS
+| Setup      | Code/Work |
+| ----------- | ----------- |
+| GCN, Cora      | Explanations saved  , Disagreement Metrics calculated  , Graphs Generated       |
+| GCN, CiteSeer   | Explanations saved  , Disagreement Metrics calculated  , Graphs Generated       |
+| GAT, Cora   | Explanations saved (not available for pge, cam and gradcam) , Disagreement Metrics calculated  , Graphs Generated       |
+| GAT, CiteSeer   | Explanations saved (not available for pge, cam and gradcam) , Disagreement Metrics calculated  , Graphs Generated       |
 
-- [ ] ***Explanation Models***
-    - [ ] Perturbation Based
-        - GNNExpl
-        - PGExpl
-    - [ ] Gradient Based
-        - Integrated Gradients
-        - GradCam
-        - BP
-    - [ ] Surrogate
-        - PGM Explainer
 
-- [ ] ***Disagreement Metrics***
+
     
