@@ -11,7 +11,7 @@ import pandas as pd
 from torch_geometric.datasets import Planetoid
 from torch_geometric.transforms import NormalizeFeatures
 
-from graphxai.explainers import GNNExplainer, PGExplainer, IntegratedGradExplainer, PGMExplainer
+from graphxai.explainers import GNNExplainer, PGExplainer, IntegratedGradExplainer, PGMExplainer, GradCAM
 # the ones below we want to use from different libraries
 from graphxai.explainers import GNN_LRP, CAM
 import pickle
@@ -110,7 +110,23 @@ def cam_imp_nodes(camex,data,node_idx):
 
     return imp_nodes
 
+def gcam_imp_nodes(camex,data,node_idx):
+    if camex==None:
+        return
 
+    node_exp = camex.get_explanation_node(node_idx = node_idx, x = data.x, edge_index = data.edge_index, y = data.y)
+
+    imp_nodes = []
+
+    mask = torch.sigmoid(node_exp.node_imp) >= 0.5
+
+    for k in node_exp.node_reference.keys():
+
+        if mask[node_exp.node_reference[k]].item() == 1:
+        
+            imp_nodes.append(k)
+
+    return imp_nodes
 
 def createExplanations(model_name,dataset_name,type):
     '''
@@ -148,6 +164,7 @@ def createExplanations(model_name,dataset_name,type):
     igex = IntegratedGradExplainer(model, criterion=criterion)
     pgm = PGMExplainer(model, explain_graph=False)
     camex = None
+    gcamex = GradCAM(model)
 
 
     pgex=None
@@ -171,6 +188,7 @@ def createExplanations(model_name,dataset_name,type):
     imp_nodes_pge = {}
     imp_nodes_pgm = {}
     imp_nodes_cam = {}
+    imp_nodes_gcam = {}
     node_indices=[]
     for node_idx in tqdm((data.test_mask == True).nonzero()): 
 
@@ -182,6 +200,7 @@ def createExplanations(model_name,dataset_name,type):
         imp_nodes_pge[node_idx] = pge_imp_nodes(pgex,data,node_idx)
         imp_nodes_pgm[node_idx] = pgm_imp_nodes(pgm,data,node_idx.item())
         imp_nodes_cam[node_idx] = cam_imp_nodes(camex,data,node_idx)
+        imp_nodes_gcam[node_idx] = gcam_imp_nodes(gcamex, data, node_idx)
 
 
 
@@ -191,7 +210,8 @@ def createExplanations(model_name,dataset_name,type):
             'gnn' : imp_nodes_gnn, 
             'pge' : imp_nodes_pge,
             'pgm':imp_nodes_pgm,
-            'cam':imp_nodes_cam}
+            'cam':imp_nodes_cam, 
+            'gcam': imp_nodes_gcam}
 
     # create a binary pickle file 
     
