@@ -131,7 +131,7 @@ def gcam_imp_nodes(camex,data,node_idx):
 def createExplanations(model_name,dataset_name,type):
     '''
     model = [ GCN, GAT, GNNConv, GCN_3L]
-    dataset= [ 'Cora','PubMed','CiteSeer','MUTAG','PROTIENS']
+    dataset= [ 'Cora','PubMed','CiteSeer','MUTAG','PROTEINS']
     type=['GC','NC'] 
 
     '''

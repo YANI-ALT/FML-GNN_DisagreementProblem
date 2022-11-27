@@ -96,7 +96,7 @@ def get_model_pretrained(model_name,dataset_name,path=''):
                     'PubMed':{'num_features':500,'num_classes':3},
                     'CiteSeer':{'num_features':3703,'num_classes':6},
                     'MUTAG':{'num_features':7,'num_classes':2},
-                    'PROTIEN':{'num_features':3,'num_classes':2}}
+                    'PROTEINS':{'num_features':3,'num_classes':2}}
     # path='checkpoints/{}_{}'
     # model = ()
     # model.load_state_dict(torch.load(PATH))
