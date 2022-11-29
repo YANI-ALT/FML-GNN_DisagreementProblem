@@ -56,18 +56,16 @@ def ig_imp_nodes(igex,data,node_idx):
     node_exp = igex.get_explanation_node(node_idx = node_idx, x = data.x, edge_index = data.edge_index, y = data.y)
 
     imp_nodes = []
-    ranking=[]
-    normalised_imp=torch.sigmoid(node_exp.node_imp)
-    mask =  normalised_imp>= 0.5
+
+    mask = torch.sigmoid(node_exp.node_imp) >= 0.5
 
     for k in node_exp.node_reference.keys():
 
         if mask[node_exp.node_reference[k]].item() == 1:
         
             imp_nodes.append(k)
-            ranking.append(normalised_imp[node_exp.node_reference[k]])
 
-    return imp_nodes,ranking
+    return imp_nodes
 
 # PGME Explainer - discrete mask of node imp, randomised, can get ranking as well by asking for top 1 then 2 and so on
 def pgm_imp_nodes(pgm,data,node_idx, top = None):
@@ -101,19 +99,17 @@ def cam_imp_nodes(camex,data,node_idx):
     node_exp = camex.get_explanation_node(node_idx = node_idx, x = data.x, edge_index = data.edge_index, y = data.y)
 
     imp_nodes = []
-    ranking=[]
-    normalised_imp=torch.sigmoid(node_exp.node_imp)
-    mask =  normalised_imp>= 0.5
+
+    mask = torch.sigmoid(node_exp.node_imp) >= 0.5
 
     for k in node_exp.node_reference.keys():
 
         if mask[node_exp.node_reference[k]].item() == 1:
-            ranking.append(normalised_imp[node_exp.node_reference[k]])
+        
             imp_nodes.append(k)
 
-    return imp_nodes,ranking
+    return imp_nodes
 
-# implementation of grad cam
 def gcam_imp_nodes(camex,data,node_idx):
     if camex==None:
         return
@@ -121,22 +117,21 @@ def gcam_imp_nodes(camex,data,node_idx):
     node_exp = camex.get_explanation_node(node_idx = node_idx, x = data.x, edge_index = data.edge_index, y = data.y)
 
     imp_nodes = []
-    ranking=[]
-    normalised_imp=torch.sigmoid(node_exp.node_imp)
-    mask = normalised_imp >= 0.5
+
+    mask = torch.sigmoid(node_exp.node_imp) >= 0.5
 
     for k in node_exp.node_reference.keys():
 
         if mask[node_exp.node_reference[k]].item() == 1:
-            ranking.append(normalised_imp[node_exp.node_reference[k]])
+        
             imp_nodes.append(k)
 
-    return imp_nodes,ranking
+    return imp_nodes
 
 def createExplanations(model_name,dataset_name,type):
     '''
     model = [ GCN, GAT, GNNConv, GCN_3L]
-    dataset= [ 'Cora','PubMed','CiteSeer','MUTAG','PROTIENS']
+    dataset= [ 'Cora','PubMed','CiteSeer','MUTAG','PROTEINS']
     type=['GC','NC'] 
 
     '''
@@ -164,13 +159,12 @@ def createExplanations(model_name,dataset_name,type):
             model=get_model_pretrained('GAT',dataset_name)
             # emb_layer_name='conv2' # GAT is not yet accomadated for in PGExpl you have to give the input channle manualy
             emb_layer = list(model.modules())[-3]
-            emb_layer_name=''
             in_channels=3* emb_layer.heads
 
     igex = IntegratedGradExplainer(model, criterion=criterion)
     pgm = PGMExplainer(model, explain_graph=False)
     camex = None
-    gcamex = None
+    gcamex = GradCAM(model)
 
 
     pgex=None
@@ -179,10 +173,8 @@ def createExplanations(model_name,dataset_name,type):
         pgex = PGExplainer(model, emb_layer_name =emb_layer_name ,  max_epochs = 500, lr = 0.01)
         pgex.train_explanation_model(data)
         camex=CAM(model)
-        gcamex=GradCAM(model)
     else :
         # pgex = PGExplainer(model, in_channels=in_channels ,  max_epochs = 500, lr = 0.01)
-        gcamex=None
         pgex=None
         camex=None
 
@@ -192,29 +184,23 @@ def createExplanations(model_name,dataset_name,type):
     out = model(data.x, data.edge_index)
 
     imp_nodes_ig = {}
-    imp_nodes_ig_ranking = {}
     imp_nodes_gnn = {}
     imp_nodes_pge = {}
     imp_nodes_pgm = {}
     imp_nodes_cam = {}
-    imp_nodes_cam_ranking = {}
     imp_nodes_gcam = {}
-    imp_nodes_gcam_ranking= {}
     node_indices=[]
     for node_idx in tqdm((data.test_mask == True).nonzero()): 
 
         if out[node_idx].argmax() != data.y[node_idx]: # only accross all the correctly classified nodes
             continue
         node_indices.append(node_idx)
-        imp_nodes_ig[node_idx] = ig_imp_nodes(igex,data,node_idx)[0]
-        imp_nodes_ig_ranking[node_idx]=ig_imp_nodes(igex,data,node_idx)[1]
+        imp_nodes_ig[node_idx] = ig_imp_nodes(igex,data,node_idx)
         imp_nodes_gnn[node_idx] = gnn_imp_nodes(gnnexp,data,node_idx)
         imp_nodes_pge[node_idx] = pge_imp_nodes(pgex,data,node_idx)
         imp_nodes_pgm[node_idx] = pgm_imp_nodes(pgm,data,node_idx.item())
-        imp_nodes_cam[node_idx] = cam_imp_nodes(camex,data,node_idx)[0]
-        imp_nodes_cam_ranking[node_idx] = cam_imp_nodes(camex,data,node_idx)[1]
-        imp_nodes_gcam[node_idx] = gcam_imp_nodes(gcamex, data, node_idx)[0]
-        imp_nodes_gcam_ranking[node_idx]=gcam_imp_nodes(gcamex, data, node_idx)[1]
+        imp_nodes_cam[node_idx] = cam_imp_nodes(camex,data,node_idx)
+        imp_nodes_gcam[node_idx] = gcam_imp_nodes(gcamex, data, node_idx)
 
 
 
@@ -225,10 +211,7 @@ def createExplanations(model_name,dataset_name,type):
             'pge' : imp_nodes_pge,
             'pgm':imp_nodes_pgm,
             'cam':imp_nodes_cam, 
-            'gcam': imp_nodes_gcam,
-            'ig_ranking' : imp_nodes_ig_ranking,
-            'cam_ranking' : imp_nodes_cam_ranking,
-            'gcam_ranking' : imp_nodes_gcam_ranking}
+            'gcam': imp_nodes_gcam}
 
     # create a binary pickle file 
     
