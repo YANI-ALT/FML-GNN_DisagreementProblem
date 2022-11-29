@@ -175,7 +175,7 @@ def calc_agg_score(expl_dict,expl_list):
     
     return agg_score
 
-def plot_score(agg_score,expl_list,title,path='',type='normal'):
+def plot_score(agg_score,expl_list,xlabel,ylabel,title,path='',type='normal'):
     np.random.seed(12)
     plt.clf()
     x=agg_score['node_indices']
@@ -192,6 +192,8 @@ def plot_score(agg_score,expl_list,title,path='',type='normal'):
 
     plt.legend()
     plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     plt.xticks(xaxis,labels=random_nodes)
     fig = plt.gcf()
     fig.set_size_inches(18.5, 10.5)
@@ -258,7 +260,7 @@ def get_disagreement(model_name,dataset_name,type,path):
     plot_jacard(compute_heatmap(agg_hub_score,expl_list),labels=expl_list,title="Agg-HubScore-CosineDist_{}_{}",path='disagreement/Agg-HubScore-CosineDist_{}_{}.png'.format(model_name,dataset_name))
     plot_jacard(compute_heatmap(agg_auth_score,expl_list),labels=expl_list,title="Agg-AuthScore-CosineDist_{}_{}",path='disagreement/Agg-AuthScore-CosineDist_{}_{}.png'.format(model_name,dataset_name))
 
-    plot_score(agg_hub_score,expl_list,title='Agg_Hubscore_{}_{}'.format(model_name,dataset_name),path='disagreement/Disagreement_Agg_Hubscore_{}_{}.png'.format(model_name,dataset_name))
-    plot_score(agg_auth_score,expl_list,title='Agg_Auth_{}_{}'.format(model_name,dataset_name),path='disagreement/Disagreement_Agg_Auth_{}_{}.png'.format(model_name,dataset_name))
+    plot_score(agg_hub_score,expl_list,xlabel='Node Index',ylabel='Avg Hubscore of Importance Nodes',title='Agg_Hubscore_{}_{}'.format(model_name,dataset_name),path='disagreement/Disagreement_Agg_Hubscore_{}_{}.png'.format(model_name,dataset_name))
+    plot_score(agg_auth_score,expl_list,xlabel='Node Index',ylabel='Avg Authscore of Importance Nodes',title='Agg_Auth_{}_{}'.format(model_name,dataset_name),path='disagreement/Disagreement_Agg_Auth_{}_{}.png'.format(model_name,dataset_name))
 
     return expl_dict,expl_list
