@@ -96,7 +96,7 @@ def pgm_imp_nodes(pgm,data,node_idx, top = None):
 
 def cam_imp_nodes(camex,data,node_idx):
     if camex==None:
-        return
+        return None
 
     node_exp = camex.get_explanation_node(node_idx = node_idx, x = data.x, edge_index = data.edge_index, y = data.y)
 
@@ -116,7 +116,7 @@ def cam_imp_nodes(camex,data,node_idx):
 # implementation of grad cam
 def gcam_imp_nodes(camex,data,node_idx):
     if camex==None:
-        return
+        return None
 
     node_exp = camex.get_explanation_node(node_idx = node_idx, x = data.x, edge_index = data.edge_index, y = data.y)
 
@@ -211,11 +211,20 @@ def createExplanations(model_name,dataset_name,type):
         imp_nodes_gnn[node_idx] = gnn_imp_nodes(gnnexp,data,node_idx)
         imp_nodes_pge[node_idx] = pge_imp_nodes(pgex,data,node_idx)
         imp_nodes_pgm[node_idx] = pgm_imp_nodes(pgm,data,node_idx.item())
-        imp_nodes_cam[node_idx] = cam_imp_nodes(camex,data,node_idx)[0]
-        imp_nodes_cam_ranking[node_idx] = cam_imp_nodes(camex,data,node_idx)[1]
-        imp_nodes_gcam[node_idx] = gcam_imp_nodes(gcamex, data, node_idx)[0]
-        imp_nodes_gcam_ranking[node_idx]=gcam_imp_nodes(gcamex, data, node_idx)[1]
+        if camex!=None:
+            imp_nodes_cam[node_idx] = cam_imp_nodes(camex,data,node_idx)[0]
+            imp_nodes_cam_ranking[node_idx] = cam_imp_nodes(camex,data,node_idx)[1]
+        else:
+            # explanations not available
+            imp_nodes_cam[node_idx] =None
+            imp_nodes_cam_ranking[node_idx] = None
 
+        if gcamex!=None:
+            imp_nodes_gcam[node_idx] = gcam_imp_nodes(gcamex, data, node_idx)[0]
+            imp_nodes_gcam_ranking[node_idx]=gcam_imp_nodes(gcamex, data, node_idx)[1]
+        else: # explanations not available
+            imp_nodes_gcam[node_idx] =None
+            imp_nodes_gcam_ranking[node_idx]=None
 
 
     # define dictionary
