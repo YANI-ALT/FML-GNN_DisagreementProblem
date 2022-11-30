@@ -1,6 +1,6 @@
 from Disagreement_Metric import *
 
-# python script to generate disagreement plots for the various saved explanations 
+# for node classification
 
 path='Saved_Explanations/Explanations_GCN_Cora_2022-11-26T15:02:04-75.pkl'
 get_disagreement(model_name='GCN',dataset_name='Cora',type='NC',path=path)
@@ -14,3 +14,18 @@ get_disagreement(model_name='GAT',dataset_name='CiteSeer',type='NC',path=path)
 path='Saved_Explanations/Explanations_GAT_Cora_2022-11-26T20:57:56-89.pkl'
 get_disagreement(model_name='GAT',dataset_name='Cora',type='NC',path=path)
 
+# for graph classification
+
+path='Saved_Explanations/Explanations_GNNGraphConv_MUTAG_2022-11-29T22_15_52-64.pkl'
+get_disagreement(model_name='GNNGraphConv',dataset_name='MUTAG',type='GC',path=path)
+
+path='Saved_Explanations/Explanations_GNNGraphConv_PROTEINS_2022-11-29T22_22_25-01.pkl'
+get_disagreement(model_name='GNNGraphConv',dataset_name='PROTEINS',type='GC',path=path)
+
+
+path='Saved_Explanations/Explanations_GCN_3L_MUTAG_2022-11-29T22_04_29-87.pkl'
+get_disagreement(model_name='GCN_3L',dataset_name='MUTAG',type='GC',path=path)
+
+
+path='Saved_Explanations/Explanations_GCN_3L_PROTEINS_2022-11-29T21_58_14-99.pkl'
+get_disagreement(model_name='GCN_3L',dataset_name='PROTEINS',type='GC',path=path)
