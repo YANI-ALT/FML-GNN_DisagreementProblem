@@ -112,7 +112,7 @@ def obtain_hits_GC(dataset,expl_dict,expl=[]):
                 expl_dict_auth[expl_type]={}
             if expl_type not in expl_dict_hubsc:
                 expl_dict_hubsc[expl_type]={}
-            # print(graph_idx," ",expl_type," ",expl_dict[expl_type][graph_idx])
+                
             expl_dict_auth[expl_type][graph_idx]=[authorities[x] for x in expl_dict[expl_type][graph_idx]]
             expl_dict_hubsc[expl_type][graph_idx]=[hubs[x] for x in expl_dict[expl_type][graph_idx]]
 
@@ -164,55 +164,6 @@ def obtain_hits_NC(data,expl_dict,expl=[]):
 
     
     return expl_dict_hubsc,expl_dict_auth
-
-def obtain_nx_scores(dataset,expl_dict,expl,index,score_name="degree_centrality"):
-    assert(len(expl)!=0)
-    
-    expl_dict_score={}
-
-    expl_dict_score[index]=expl_dict[index]
-    
-    data=dataset[0]
-
-    if index=='graph_indices':
-        for idx in expl_dict[index]:
-            data=dataset[idx]
-            # print(graph_idx)
-            G = to_networkx(data)
-            nx_score_list = []
-            if score_name=='degree_centrality':
-                nx_score_list=nx.degree_centrality(G)
-            else :
-                return {}
-            # mapping each imp_list for each node_idx to the corresponding hub and authority list
-            for expl_type in expl:
-                # print(expl_type)
-                if expl_type not in expl_dict_score:
-                    expl_dict_score[expl_type]={}
-                    
-                expl_dict_score[expl_type][idx]=[nx_score_list[x] for x in expl_dict[expl_type][idx]]
-    elif index=='node_indices':
-        data=dataset[0]
-        nx_score_list=[]
-        G = to_networkx(data)
-
-        if score_name=='degree_centrality':
-            nx_score_list=nx.degree_centrality(G)
-        else:
-            return {}
-        for idx in expl_dict[index]:
-            # print("size hubs:",len(hubs))
-            # print("size auth:",len(authorities))
-            # mapping each imp_list for each node_idx to the corresponding hub and authority list
-            for expl_type in expl:
-                # print(expl_type)
-                if expl_type not in expl_dict_score:
-                    expl_dict_score[expl_type]={}
-                    
-                expl_dict_score[expl_type][idx]=[nx_score_list[x] for x in expl_dict[expl_type][idx]]
-
-    
-    return expl_dict_score
 
 def get_valid_expl(expl_dict,index):
     # it returns the list of valid explanations available 
@@ -298,32 +249,14 @@ def compute_heatmap(expl_dict,expl_list):
 
     return matrix
 
-def get_top3(expl_dict,expl_dict_rank,expl_list,index,out='nodes'):
-    top3={}
-    top3[index]=expl_dict[index]
-    for idx in expl_dict[index]:
-        for expl in expl_list:
-            if expl not in top3:
-                top3[expl]={}
-
-            ranking_=expl_dict_rank[expl][idx]
-            nodes_=expl_dict[expl][idx]
-            if(out=='nodes'):
-                top3[expl][idx]=[x[0] for x in sorted(list(zip(nodes_,ranking_)), key=lambda x: x[1], reverse=True)[0:3]]
-            else:
-                top3[expl][idx]=sorted(list(zip(nodes_,ranking_)), key=lambda x: x[1], reverse=True)[0:3]
-    return top3
-        
-
 def get_disagreement(model_name,dataset_name,type,path):
     if dataset_name not in path.split('_'):
         print('{} provided is not for the {}'.format(path,dataset_name))
         return None
     else :
-        if '_' not in model_name:
-            if model_name not in path.split('_') :
-                print('{} provided is not for the {}'.format(path,model_name))
-                return None
+        if '_' not in model_name and model_name not in path.split('_') :
+            print('{} provided is not for the {}'.format(path,model_name))
+            return None
         else :
             if model_name!='GCN_3L':
                 print('{} provided is not for the {}'.format(path,model_name))
@@ -365,7 +298,7 @@ def get_disagreement(model_name,dataset_name,type,path):
     else:
         expl_dict_hubsc,expl_dict_auth=obtain_hits_GC(dataset,expl_dict,expl)
 
-    
+     
     agg_hub_score=calc_agg_score(expl_dict_hubsc,expl_list,index)
     agg_auth_score=calc_agg_score(expl_dict_auth,expl_list,index)
 
@@ -375,92 +308,5 @@ def get_disagreement(model_name,dataset_name,type,path):
 
     plot_score(agg_hub_score,expl_list,index=index,xlabel=index,ylabel='Avg Hubscore of Importance Nodes',title='Agg_Hubscore_{}_{}'.format(model_name,dataset_name),path='disagreement/Disagreement_Agg_Hubscore_{}_{}.png'.format(model_name,dataset_name))
     plot_score(agg_auth_score,expl_list,index=index,xlabel=index,ylabel='Avg Authscore of Importance Nodes',title='Agg_Auth_{}_{}'.format(model_name,dataset_name),path='disagreement/Disagreement_Agg_Auth_{}_{}.png'.format(model_name,dataset_name))
-
-    # for degree centrality
-    expl_dict_deg_centr=obtain_nx_scores(dataset,expl_dict,expl,index,score_name="degree_centrality")
-    agg_degcentr_score=calc_agg_score(expl_dict_deg_centr,expl_list,index)
-    plot_jacard(compute_heatmap(agg_degcentr_score,expl_list),labels=expl_list,title="Agg-DegCentr-CosineDist_{}_{}".format(model_name,dataset_name),path='disagreement/Agg-DegCentr-CosineDist_{}_{}.png'.format(model_name,dataset_name))
-    plot_score(agg_degcentr_score,expl_list,index=index,xlabel=index,ylabel='Avg DegCentr of Importance Nodes',title='Agg_DegCentr_{}_{}'.format(model_name,dataset_name),path='disagreement/Disagreement_Agg_DegCentr_{}_{}.png'.format(model_name,dataset_name))
-
-    return expl_dict,expl_list
-
-
-def get_disagreement_from_ranking(model_name,dataset_name,type,expl_path,ranking_path):
-    
-    # check file for explanation data
-    if dataset_name not in expl_path.split('_'):
-        print('{} provided is not for the {}'.format(expl_path,dataset_name))
-        return None
-    else :
-        if '_' not in model_name:
-            if model_name not in expl_path.split('_') :
-                print("here")
-                print('{} provided is not for the {}'.format(expl_path,model_name))
-                return None
-        else :
-            if model_name!='GCN_3L':
-                print("here")
-                print('{} provided is not for the {}'.format(expl_path,model_name))
-                return None
-     
-    # check file of ranking data
-    if dataset_name not in ranking_path.split('_'):
-        print('{} provided is not for the {}'.format(ranking_path,dataset_name))
-        return None
-    else :
-        if '_' not in model_name:
-            if model_name not in ranking_path.split('_') :
-                print('{} provided is not for the {}'.format(ranking_path,model_name))
-                return None
-        else :
-            if model_name!='GCN_3L':
-                print('{} provided is not for the {}'.format(ranking_path,model_name))
-                return None
-
-    
-    assert(model_name in ['GCN','GAT','GCN_3L','GNNGraphConv'])
-    assert(dataset_name in ['Cora','CiteSeer','MUTAG','PROTEINS'])
-    assert(type in ['GC','NC'])
-    
-    dataset=None
-    data=None
-    index=''
-
-    if type=='NC':
-        # TODO
-        print("Not implemented yet")
-    elif type=='GC':
-        dataset = TUDataset(root='data/TUDataset', name=dataset_name)
-        index='graph_indices'
-
-        
-        
-    # obtain the saved explanation
-    expl_dict=read_pickle(expl_path)
-
-    expl_dict_rank=read_pickle(ranking_path)
-    expl_list=get_valid_expl(expl_dict_rank,index)
-
-    top3=get_top3(expl_dict,expl_dict_rank,expl_list,index,out='nodes')
-
-    expl_dict_hubsc={}  
-    expl_dict_auth={}
-    
-    if type=='GC':
-        expl_dict_hubsc,expl_dict_auth=obtain_hits_GC(dataset,top3,expl_list)
-
-    node_imp_jaccard,expl_list=get_jaccard(top3,expl_list,index=index)
-    plot_jacard(node_imp_jaccard,expl_list,title="Top3_Disagreement_Node_Imp_{}_{}".format(model_name,dataset_name),path='disagreement/Top3_Disagreement_Node_Imp_{}_{}.png'.format(model_name,dataset_name))
-    
-     
-    agg_hub_score=calc_agg_score(expl_dict_hubsc,expl_list,index)
-    agg_auth_score=calc_agg_score(expl_dict_auth,expl_list,index)
-
-    
-    plot_jacard(compute_heatmap(agg_hub_score,expl_list),labels=expl_list,title="Top3_Agg-HubScore-CosineDist_{}_{}".format(model_name,dataset_name),path='disagreement/Top3_Agg-HubScore-CosineDist_{}_{}.png'.format(model_name,dataset_name))
-    plot_jacard(compute_heatmap(agg_auth_score,expl_list),labels=expl_list,title="Top3_Agg-AuthScore-CosineDist_{}_{}".format(model_name,dataset_name),path='disagreement/Top3_Agg-AuthScore-CosineDist_{}_{}.png'.format(model_name,dataset_name))
-
-    plot_score(agg_hub_score,expl_list,index=index,xlabel=index,ylabel='Top3 Avg Hubscore of Importance Nodes',title='Top3 Agg_Hubscore_{}_{}'.format(model_name,dataset_name),path='disagreement/Top3_Disagreement_Agg_Hubscore_{}_{}.png'.format(model_name,dataset_name))
-    plot_score(agg_auth_score,expl_list,index=index,xlabel=index,ylabel='Top3 Avg Authscore of Importance Nodes',title='Top3 Agg_Auth_{}_{}'.format(model_name,dataset_name),path='disagreement/Top3_Disagreement_Agg_Auth_{}_{}.png'.format(model_name,dataset_name))
 
     return expl_dict,expl_list

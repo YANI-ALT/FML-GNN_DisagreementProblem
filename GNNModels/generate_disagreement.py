@@ -29,3 +29,20 @@ get_disagreement(model_name='GCN_3L',dataset_name='MUTAG',type='GC',path=path)
 
 path='Saved_Explanations/Explanations_GCN_3L_PROTEINS_2022-11-29T21_58_14-99.pkl'
 get_disagreement(model_name='GCN_3L',dataset_name='PROTEINS',type='GC',path=path)
+
+
+# expl_path='Saved_Explanations/Explanations_GCN_3L_PROTEINS_2022-11-29T21_58_14-99.pkl'
+# ranking_path='Saved_Explanations/Rankings_GCN_3L_PROTEINS_2022-11-29T21_58_14-99.pkl'
+# get_disagreement_from_ranking(model_name='GCN_3L',dataset_name='PROTEINS',type='GC',expl_path=expl_path,ranking_path=ranking_path)
+
+# expl_path='Saved_Explanations/Explanations_GCN_3L_MUTAG_2022-11-29T22_04_29-87.pkl'
+# ranking_path='Saved_Explanations/Rankings_GCN_3L_MUTAG_2022-11-29T22_04_29-87.pkl'
+# get_disagreement_from_ranking(model_name='GCN_3L',dataset_name='MUTAG',type='GC',expl_path=expl_path,ranking_path=ranking_path)
+
+# expl_path='Saved_Explanations/Explanations_GNNGraphConv_PROTEINS_2022-11-29T22_22_25-01.pkl'
+# ranking_path='Saved_Explanations/Rankings_GNNGraphConv_PROTEINS_2022-11-29T22_22_25-01.pkl'
+# get_disagreement_from_ranking(model_name='GNNGraphConv',dataset_name='PROTEINS',type='GC',expl_path=expl_path,ranking_path=ranking_path)
+
+# expl_path='Saved_Explanations/Explanations_GNNGraphConv_MUTAG_2022-11-29T22_15_52-64.pkl'
+# ranking_path='Saved_Explanations/Rankings_GNNGraphConv_MUTAG_2022-11-29T22_15_52-64.pkl'
+# get_disagreement_from_ranking(model_name='GNNGraphConv',dataset_name='MUTAG',type='GC',expl_path=expl_path,ranking_path=ranking_path)
