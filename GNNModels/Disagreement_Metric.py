@@ -330,7 +330,20 @@ def get_top3(expl_dict,expl_dict_rank,expl_list,index,out='nodes'):
             else:
                 top3[expl][idx]=sorted(list(zip(nodes_,ranking_)), key=lambda x: x[1], reverse=True)[0:3]
     return top3
-        
+
+def get_pgm_top3(model_name,dataset_name):
+    GNNGraphConv_MUTAG='Saved_Explanations/PGM_top3_GNNGraphConv_MUTAG_2022-11-30T21_31_20-98.pkl'
+    GNNGraphConv_PROTEINS='Saved_Explanations/PGM_top3_GNNGraphConv_PROTEINS_2022-11-30T21_50_14-05.pkl'
+
+    GCN_3L_PROTEINS='Saved_Explanations/PGM_top3_GCN_3L_PROTEINS_2022-11-30T21_54_07-66.pkl'
+    GCN_3L_MUTAG='Saved_Explanations/PGM_top3_GCN_3L_MUTAG_2022-11-30T21_57_06-60.pkl'
+
+    GCN_3L_paths={'PROTEINS':GCN_3L_PROTEINS,'MUTAG':GCN_3L_MUTAG}
+    GNNGraphConv_paths={'PROTEINS':GNNGraphConv_PROTEINS,'MUTAG':GNNGraphConv_MUTAG}
+    
+    file_paths={'GCN_3L':GCN_3L_paths,'GNNGraphConv':GNNGraphConv_paths}
+
+    return read_pickle(file_paths[model_name][dataset_name])
 
 def get_disagreement(model_name,dataset_name,type,path):
     '''
@@ -465,6 +478,17 @@ def get_disagreement_from_ranking(model_name,dataset_name,type,expl_path,ranking
     expl_list=get_valid_expl(expl_dict_rank,index)
 
     top3=get_top3(expl_dict,expl_dict_rank,expl_list,index,out='nodes')
+
+    top3_pgm=get_pgm_top3(model_name,dataset_name)
+    top3['pgm']={}
+    for idx in top3[index]:
+        top3['pgm'][idx]=top3_pgm['pgm_top3'][idx]
+
+    # expl_list.append('pgm')
+    if model_name=='GCN_3L':
+        expl_list=['ig','pgm','cam','gcam']
+    else:
+        expl_list=['ig','pgm']
 
     expl_dict_hubsc={}  
     expl_dict_auth={}
