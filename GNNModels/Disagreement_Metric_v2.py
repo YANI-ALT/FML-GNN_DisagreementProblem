@@ -3,13 +3,12 @@ import numpy as np
 import seaborn as sns
 import pandas as pd
 import networkx as nx
-from torch_geometric.datasets import Planetoid,TUDataset
+from torch_geometric.datasets import Planetoid
 from torch_geometric.transforms import NormalizeFeatures
 from torch_geometric.utils import to_networkx
 import datetime
 import matplotlib.pyplot as plt
 import scipy
-
 
 def read_pickle(path):
     objects = None
@@ -32,11 +31,11 @@ def jaccard(list1, list2):
     return float(intersection) / union
 
 
-def get_jaccard(expl_dict,expl,index):
+def get_jaccard(expl_dict,expl):
     assert(len(expl)!=0)
     n_methods=len(expl)
     jacard = np.zeros((n_methods, n_methods))
-    node_indices=expl_dict[index]
+    node_indices=expl_dict['node_indices']
     count = 0
 
     for k in node_indices:
@@ -88,38 +87,8 @@ def plot_jacard(jacard,labels,title,path=''):
 
     return 
 
-def obtain_hits_GC(dataset,expl_dict,expl=[]):
-    assert(len(expl)!=0)
-    
-    expl_dict_auth={}
-    expl_dict_hubsc={}
 
-    expl_dict_hubsc['graph_indices']=expl_dict['graph_indices']
-    expl_dict_auth['graph_indices']=expl_dict['graph_indices']
-
-    for graph_idx in expl_dict['graph_indices']:
-        data=dataset[graph_idx]
-        # print(graph_idx)
-        G = to_networkx(data)
-        hubs = nx.hits(G)[0]
-        authorities = nx.hits(G)[1]
-        # print("size hubs:",len(hubs))
-        # print("size auth:",len(authorities))
-        # mapping each imp_list for each node_idx to the corresponding hub and authority list
-        for expl_type in expl:
-            # print(expl_type)
-            if expl_type not in expl_dict_auth:
-                expl_dict_auth[expl_type]={}
-            if expl_type not in expl_dict_hubsc:
-                expl_dict_hubsc[expl_type]={}
-                
-            expl_dict_auth[expl_type][graph_idx]=[authorities[x] for x in expl_dict[expl_type][graph_idx]]
-            expl_dict_hubsc[expl_type][graph_idx]=[hubs[x] for x in expl_dict[expl_type][graph_idx]]
-
-    
-    return expl_dict_hubsc,expl_dict_auth
-
-def obtain_hits_NC(data,expl_dict,expl=[]):
+def obtain_hits(data,expl_dict,expl=[]):
     assert(len(expl)!=0)
     G = to_networkx(data)
     hubs = nx.hits(G)[0]
@@ -165,13 +134,13 @@ def obtain_hits_NC(data,expl_dict,expl=[]):
     
     return expl_dict_hubsc,expl_dict_auth
 
-def get_valid_expl(expl_dict,index):
+def get_valid_expl(expl_dict):
     # it returns the list of valid explanations available 
     # it checks if for any explanation there is a none entry
 
     available_expl=list(expl_dict.keys())[1:] # first one is always 'node_indices'
     valid_expl=[]
-    node_indices=expl_dict[index]
+    node_indices=expl_dict['node_indices']
     is_valid=True
     for expl in available_expl:
         if 'ranking' in expl.split('_'): # does not include any ranking entries eg. ig_ranking,cam_ranking, gcam_ranking
@@ -191,10 +160,10 @@ def pearson_corr(list1,list2):
     corr,_= scipy.stats.spearmanr(list1,list2)
     return corr
 
-def calc_agg_score(expl_dict,expl_list,index):
-    node_indices=expl_dict[index]
+def calc_agg_score(expl_dict,expl_list):
+    node_indices=expl_dict['node_indices']
     agg_score={}
-    agg_score[index]=node_indices
+    agg_score['node_indices']=node_indices
     for node_idx in node_indices:
         for exp_type in expl_list:
             if exp_type not in agg_score:
@@ -206,17 +175,12 @@ def calc_agg_score(expl_dict,expl_list,index):
     
     return agg_score
 
-def plot_score(agg_score,expl_list,index,xlabel,ylabel,title,path='',type='normal'):
+def plot_score(agg_score,expl_list,xlabel,ylabel,title,path='',type='normal'):
     np.random.seed(12)
     plt.clf()
-    x=agg_score[index]
+    x=agg_score['node_indices']
     random_nodes_index=np.random.choice(list(range(0,len(x))), size=10)
-
-    if isinstance(x[0], int):
-        random_nodes=[x[i] for i in random_nodes_index]
-    else:
-        random_nodes=[x[i].item() for i in random_nodes_index]
-
+    random_nodes=[x[i].item() for i in random_nodes_index]
     xaxis=list(range(0,len(random_nodes)))
     for exp_type in expl_list:
         if type=='log':
@@ -232,7 +196,7 @@ def plot_score(agg_score,expl_list,index,xlabel,ylabel,title,path='',type='norma
     plt.ylabel(ylabel)
     plt.xticks(xaxis,labels=random_nodes)
     fig = plt.gcf()
-    # fig.set_size_inches(18.5, 10.5)
+    fig.set_size_inches(18.5, 10.5)
     if path!='':
         plt.savefig(path)
 
@@ -250,63 +214,53 @@ def compute_heatmap(expl_dict,expl_list):
     return matrix
 
 def get_disagreement(model_name,dataset_name,type,path):
-    if dataset_name not in path.split('_'):
-        print('{} provided is not for the {}'.format(path,dataset_name))
+    if model_name not in path.split('_') or dataset_name not in path.split('_'):
+        print('{} provided is not for the {} and {}'.format(path,model_name,dataset_name))
         return None
-    else :
-        if '_' not in model_name and model_name not in path.split('_') :
-            print('{} provided is not for the {}'.format(path,model_name))
-            return None
-        else :
-            if model_name!='GCN_3L':
-                print('{} provided is not for the {}'.format(path,model_name))
-                return None
-
     
     assert(model_name in ['GCN','GAT','GCN_3L','GNNGraphConv'])
-    assert(dataset_name in ['Cora','CiteSeer','MUTAG','PROTEINS'])
+    assert(dataset_name in ['Cora','CiteSeer','MUTAG','PROTEIN'])
     assert(type in ['GC','NC'])
     
     dataset=None
     data=None
-    index=''
-
     if type=='NC':
         dataset = Planetoid(root='/tmp/Planetoid', name=dataset_name, transform=NormalizeFeatures())
         data = dataset[0]  # Get the first graph object.
-        index='node_indices'
     elif type=='GC':
-        dataset = TUDataset(root='data/TUDataset', name=dataset_name)
-        index='graph_indices'
-
-        
+        # TODO
+        print("No implementation yet")
+        return
         
     # obtain the saved explanation
     expl_dict=read_pickle(path)
-    expl=get_valid_expl(expl_dict,index)
+    expl=get_valid_expl(expl_dict)
 
     now = datetime.datetime.now()
     timestamp_str=now.strftime('%Y-%m-%dT%H:%M:%S') + ('-%02d' % (now.microsecond / 10000))
 
-    node_imp_jaccard,expl_list=get_jaccard(expl_dict,expl,index=index)
-    plot_jacard(node_imp_jaccard,expl_list,title="Disagreement_Node_Imp_{}_{}".format(model_name,dataset_name),path='disagreement/Disagreement_Node_Imp_{}_{}.png'.format(model_name,dataset_name))
+    node_imp_jaccard,expl_list=get_jaccard(expl_dict,expl)
+    plot_jacard(node_imp_jaccard,expl_list,title="Disagreement_Node_Imp_{}_{}".format(model_name,dataset_name),path='disagreement/Disagreement_Node_Imp_{}_{}_{}.png'.format(model_name,dataset_name,timestamp_str))
+
+    expl_dict_hubsc,expl_dict_auth=obtain_hits(data,expl_dict,expl)
+
+    # these metrics dont really make sense
+    # they do the thing same as the above jaccard
+
+    # hubsc_jaccard,expl_list=get_jaccard(expl_dict_hubsc,expl)
+    # plot_jacard(hubsc_jaccard,expl_list,title="Disagreement_Hubsc_{}_{}".format(model_name,dataset_name),path='disagreement/Disagreement_Hubsc_{}_{}_{}.png'.format(model_name,dataset_name,timestamp_str))
+
+    # auth_jaccard,expl_list=get_jaccard(expl_dict_auth,expl)
+    # plot_jacard(auth_jaccard,expl_list,title="Disagreement_Auth_{}_{}".format(model_name,dataset_name),path='disagreement/Disagreement_Auth_{}_{}_{}.png'.format(model_name,dataset_name,timestamp_str))
+
+    agg_hub_score=calc_agg_score(expl_dict_hubsc,expl_list)
+    agg_auth_score=calc_agg_score(expl_dict_auth,expl_list)
+
     
-    expl_dict_hubsc={}
-    expl_dict_auth={}
-    if type=='NC':
-        expl_dict_hubsc,expl_dict_auth=obtain_hits_NC(data,expl_dict,expl)
-    else:
-        expl_dict_hubsc,expl_dict_auth=obtain_hits_GC(dataset,expl_dict,expl)
+    plot_jacard(compute_heatmap(agg_hub_score,expl_list),labels=expl_list,title="Agg-HubScore-CosineDist_{}_{}",path='disagreement/Agg-HubScore-CosineDist_{}_{}.png'.format(model_name,dataset_name))
+    plot_jacard(compute_heatmap(agg_auth_score,expl_list),labels=expl_list,title="Agg-AuthScore-CosineDist_{}_{}",path='disagreement/Agg-AuthScore-CosineDist_{}_{}.png'.format(model_name,dataset_name))
 
-     
-    agg_hub_score=calc_agg_score(expl_dict_hubsc,expl_list,index)
-    agg_auth_score=calc_agg_score(expl_dict_auth,expl_list,index)
-
-    
-    plot_jacard(compute_heatmap(agg_hub_score,expl_list),labels=expl_list,title="Agg-HubScore-CosineDist_{}_{}".format(model_name,dataset_name),path='disagreement/Agg-HubScore-CosineDist_{}_{}.png'.format(model_name,dataset_name))
-    plot_jacard(compute_heatmap(agg_auth_score,expl_list),labels=expl_list,title="Agg-AuthScore-CosineDist_{}_{}".format(model_name,dataset_name),path='disagreement/Agg-AuthScore-CosineDist_{}_{}.png'.format(model_name,dataset_name))
-
-    plot_score(agg_hub_score,expl_list,index=index,xlabel=index,ylabel='Avg Hubscore of Importance Nodes',title='Agg_Hubscore_{}_{}'.format(model_name,dataset_name),path='disagreement/Disagreement_Agg_Hubscore_{}_{}.png'.format(model_name,dataset_name))
-    plot_score(agg_auth_score,expl_list,index=index,xlabel=index,ylabel='Avg Authscore of Importance Nodes',title='Agg_Auth_{}_{}'.format(model_name,dataset_name),path='disagreement/Disagreement_Agg_Auth_{}_{}.png'.format(model_name,dataset_name))
+    plot_score(agg_hub_score,expl_list,xlabel='Node Index',ylabel='Avg Hubscore of Importance Nodes',title='Agg_Hubscore_{}_{}'.format(model_name,dataset_name),path='disagreement/Disagreement_Agg_Hubscore_{}_{}.png'.format(model_name,dataset_name))
+    plot_score(agg_auth_score,expl_list,xlabel='Node Index',ylabel='Avg Authscore of Importance Nodes',title='Agg_Auth_{}_{}'.format(model_name,dataset_name),path='disagreement/Disagreement_Agg_Auth_{}_{}.png'.format(model_name,dataset_name))
 
     return expl_dict,expl_list
