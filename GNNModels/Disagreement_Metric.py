@@ -241,6 +241,9 @@ def pearson_corr(list1,list2):
     return corr
 
 def calc_agg_score(expl_dict,expl_list,index):
+    '''
+        calculate the aggregate score for scores for each node_idx/graph_idx for each explainer
+    '''
     node_indices=expl_dict[index]
     agg_score={}
     agg_score[index]=node_indices
@@ -256,6 +259,9 @@ def calc_agg_score(expl_dict,expl_list,index):
     return agg_score
 
 def plot_score(agg_score,expl_list,index,xlabel,ylabel,title,path='',type='normal'):
+    '''
+        Pointwise difference in the agg_score quantities for a random set of indices
+    '''
     np.random.seed(12)
     plt.clf()
     x=agg_score[index]
@@ -286,9 +292,17 @@ def plot_score(agg_score,expl_list,index,xlabel,ylabel,title,path='',type='norma
         plt.savefig(path)
 
 def compute_cosine(list1,list2):
+    '''
+        compute cosine distance of two lists/vectors
+    '''
     return scipy.spatial.distance.cosine(list1,list2)
 
 def compute_heatmap(expl_dict,expl_list):
+    '''
+        Function plots heatmap for explainers by computing the cosine distance 
+        For each explainer, we have a single vector of a metric (eg aggregate hub score) indexed by the node idx 
+
+    '''
     n=len(expl_list)
     matrix=np.zeros((n,n))
     for i in range(0,n):
@@ -299,6 +313,9 @@ def compute_heatmap(expl_dict,expl_list):
     return matrix
 
 def get_top3(expl_dict,expl_dict_rank,expl_list,index,out='nodes'):
+    '''
+        Function to obtain the top3 nodes of importance for a particular nodes using the rankings
+    '''
     top3={}
     top3[index]=expl_dict[index]
     for idx in expl_dict[index]:
@@ -316,6 +333,10 @@ def get_top3(expl_dict,expl_dict_rank,expl_list,index,out='nodes'):
         
 
 def get_disagreement(model_name,dataset_name,type,path):
+    '''
+        Function uses the node importance (without ranking) provided for each node in the graph for different explainers.
+    
+    '''
     if dataset_name not in path.split('_'):
         print('{} provided is not for the {}'.format(path,dataset_name))
         return None
@@ -386,7 +407,9 @@ def get_disagreement(model_name,dataset_name,type,path):
 
 
 def get_disagreement_from_ranking(model_name,dataset_name,type,expl_path,ranking_path):
-    
+    '''
+        Function to generate all the results that use ranking of node importance etc.
+    '''
     # check file for explanation data
     if dataset_name not in expl_path.split('_'):
         print('{} provided is not for the {}'.format(expl_path,dataset_name))
