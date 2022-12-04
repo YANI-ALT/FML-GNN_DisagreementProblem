@@ -1,4 +1,4 @@
-name: DIG_GXAI
+name: GNNDisagreement
 channels:
   - conda-forge
   - defaults
@@ -146,4 +146,4 @@ dependencies:
     - wcwidth==0.2.5
     - webencodings==0.5.1
     - websocket-client==1.4.2
-prefix: /opt/homebrew/anaconda3/envs/DIG_GXAI
+prefix: /opt/homebrew/anaconda3/envs/GNNDisagreement
