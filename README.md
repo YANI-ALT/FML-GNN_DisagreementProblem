@@ -8,36 +8,3 @@ Useful Links :
 4. [Pytorch Geometric Datasets](https://pytorch-geometric.readthedocs.io/en/latest/notes/data_cheatsheet.html)
 5. Graph XAI (https://github.com/mims-harvard/GraphXAI)
 
-
-## Plan Outline
-
-- [ ] ***Node Classification***
-    - [x] Models 
-        - GCN
-        - GAT 
-    - [x] Datasets
-        - Cora
-        - PubMed
-        - CiteSeer
-
-- [ ] ***Graph Classification***
-    - [x] Models
-        - GCN_3L
-        - GNNGraphConv
-    - [x] Datasets
-        - MUTAG
-        - PROTIENS
-
-- [ ] ***Explanation Models***
-    - [ ] Perturbation Based
-        - GNNExpl
-        - PGExpl
-    - [ ] Gradient Based
-        - Integrated Gradients
-        - GradCam
-        - BP
-    - [ ] Surrogate
-        - PGM Explainer
-
-- [ ] ***Disagreement Metrics***
-    
