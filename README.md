@@ -24,6 +24,8 @@ The `Tutorial1.ipynb` file contains the example code for training the GNN models
 
 The `Tutorial2.ipynb` file contains the example code for loading a pretrained GNN model using checkpoints.
 
+The `Models_Summary.ipynb` file contains information on the models (test/train accuracy) and dataset
+
 
 ### Reference Links :
 1. [DIG Library](https://github.com/divelab/DIG)
