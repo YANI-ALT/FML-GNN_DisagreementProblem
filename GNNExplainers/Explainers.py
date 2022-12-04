@@ -153,7 +153,7 @@ def createExplanations(model_name,dataset_name,type):
     in_channels=2
 
     if type=='NC':
-        dataset = Planetoid(root='../GNNModels/data/Planetoid', name=dataset_name, transform=NormalizeFeatures())
+        dataset = Planetoid(root='GNNModels/data/Planetoid', name=dataset_name, transform=NormalizeFeatures())
         data = dataset[0]
         criterion=torch.nn.CrossEntropyLoss()
 

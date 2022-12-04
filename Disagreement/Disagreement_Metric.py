@@ -332,11 +332,11 @@ def get_top3(expl_dict,expl_dict_rank,expl_list,index,out='nodes'):
     return top3
 
 def get_pgm_top3(model_name,dataset_name):
-    GNNGraphConv_MUTAG='Saved_Explanations/PGM_top3_GNNGraphConv_MUTAG_2022-11-30T21_31_20-98.pkl'
-    GNNGraphConv_PROTEINS='Saved_Explanations/PGM_top3_GNNGraphConv_PROTEINS_2022-11-30T21_50_14-05.pkl'
+    GNNGraphConv_MUTAG='GNNExplainers/Saved_Explanations/PGM_top3_GNNGraphConv_MUTAG_2022-11-30T21_31_20-98.pkl'
+    GNNGraphConv_PROTEINS='GNNExplainers/Saved_Explanations/PGM_top3_GNNGraphConv_PROTEINS_2022-11-30T21_50_14-05.pkl'
 
-    GCN_3L_PROTEINS='Saved_Explanations/PGM_top3_GCN_3L_PROTEINS_2022-11-30T21_54_07-66.pkl'
-    GCN_3L_MUTAG='Saved_Explanations/PGM_top3_GCN_3L_MUTAG_2022-11-30T21_57_06-60.pkl'
+    GCN_3L_PROTEINS='GNNExplainers/Saved_Explanations/PGM_top3_GCN_3L_PROTEINS_2022-11-30T21_54_07-66.pkl'
+    GCN_3L_MUTAG='GNNExplainers/Saved_Explanations/PGM_top3_GCN_3L_MUTAG_2022-11-30T21_57_06-60.pkl'
 
     GCN_3L_paths={'PROTEINS':GCN_3L_PROTEINS,'MUTAG':GCN_3L_MUTAG}
     GNNGraphConv_paths={'PROTEINS':GNNGraphConv_PROTEINS,'MUTAG':GNNGraphConv_MUTAG}
@@ -373,11 +373,11 @@ def get_disagreement(model_name,dataset_name,type,path):
     index=''
 
     if type=='NC':
-        dataset = Planetoid(root='../GNNModels/data/Planetoid', name=dataset_name, transform=NormalizeFeatures())
+        dataset = Planetoid(root='GNNModels/data/Planetoid', name=dataset_name, transform=NormalizeFeatures())
         data = dataset[0]  # Get the first graph object.
         index='node_indices'
     elif type=='GC':
-        dataset = TUDataset(root='../GNNModels/data/TUDataset', name=dataset_name)
+        dataset = TUDataset(root='GNNModels/data/TUDataset', name=dataset_name)
         index='graph_indices'
 
         
@@ -390,7 +390,7 @@ def get_disagreement(model_name,dataset_name,type,path):
     timestamp_str=now.strftime('%Y-%m-%dT%H:%M:%S') + ('-%02d' % (now.microsecond / 10000))
 
     node_imp_jaccard,expl_list=get_jaccard(expl_dict,expl,index=index)
-    plot_jacard(node_imp_jaccard,expl_list,title="Disagreement_Node_Imp_{}_{}".format(model_name,dataset_name),path='disagreement/Disagreement_Node_Imp_{}_{}.png'.format(model_name,dataset_name))
+    plot_jacard(node_imp_jaccard,expl_list,title="Disagreement_Node_Imp_{}_{}".format(model_name,dataset_name),path='Disagreement/disagreement/Disagreement_Node_Imp_{}_{}.png'.format(model_name,dataset_name))
     
     expl_dict_hubsc={}
     expl_dict_auth={}
@@ -404,17 +404,17 @@ def get_disagreement(model_name,dataset_name,type,path):
     agg_auth_score=calc_agg_score(expl_dict_auth,expl_list,index)
 
     
-    plot_jacard(compute_heatmap(agg_hub_score,expl_list),labels=expl_list,title="Agg-HubScore-CosineDist_{}_{}".format(model_name,dataset_name),path='disagreement/Agg-HubScore-CosineDist_{}_{}.png'.format(model_name,dataset_name))
-    plot_jacard(compute_heatmap(agg_auth_score,expl_list),labels=expl_list,title="Agg-AuthScore-CosineDist_{}_{}".format(model_name,dataset_name),path='disagreement/Agg-AuthScore-CosineDist_{}_{}.png'.format(model_name,dataset_name))
+    plot_jacard(compute_heatmap(agg_hub_score,expl_list),labels=expl_list,title="Agg-HubScore-CosineDist_{}_{}".format(model_name,dataset_name),path='Disagreement/disagreement/Agg-HubScore-CosineDist_{}_{}.png'.format(model_name,dataset_name))
+    plot_jacard(compute_heatmap(agg_auth_score,expl_list),labels=expl_list,title="Agg-AuthScore-CosineDist_{}_{}".format(model_name,dataset_name),path='Disagreement/disagreement/Agg-AuthScore-CosineDist_{}_{}.png'.format(model_name,dataset_name))
 
-    plot_score(agg_hub_score,expl_list,index=index,xlabel=index,ylabel='Avg Hubscore of Importance Nodes',title='Agg_Hubscore_{}_{}'.format(model_name,dataset_name),path='disagreement/Disagreement_Agg_Hubscore_{}_{}.png'.format(model_name,dataset_name))
-    plot_score(agg_auth_score,expl_list,index=index,xlabel=index,ylabel='Avg Authscore of Importance Nodes',title='Agg_Auth_{}_{}'.format(model_name,dataset_name),path='disagreement/Disagreement_Agg_Auth_{}_{}.png'.format(model_name,dataset_name))
+    plot_score(agg_hub_score,expl_list,index=index,xlabel=index,ylabel='Avg Hubscore of Importance Nodes',title='Agg_Hubscore_{}_{}'.format(model_name,dataset_name),path='Disagreement/disagreement/Disagreement_Agg_Hubscore_{}_{}.png'.format(model_name,dataset_name))
+    plot_score(agg_auth_score,expl_list,index=index,xlabel=index,ylabel='Avg Authscore of Importance Nodes',title='Agg_Auth_{}_{}'.format(model_name,dataset_name),path='Disagreement/disagreement/Disagreement_Agg_Auth_{}_{}.png'.format(model_name,dataset_name))
 
     # for degree centrality
     expl_dict_deg_centr=obtain_nx_scores(dataset,expl_dict,expl,index,score_name="degree_centrality")
     agg_degcentr_score=calc_agg_score(expl_dict_deg_centr,expl_list,index)
-    plot_jacard(compute_heatmap(agg_degcentr_score,expl_list),labels=expl_list,title="Agg-DegCentr-CosineDist_{}_{}".format(model_name,dataset_name),path='disagreement/Agg-DegCentr-CosineDist_{}_{}.png'.format(model_name,dataset_name))
-    plot_score(agg_degcentr_score,expl_list,index=index,xlabel=index,ylabel='Avg DegCentr of Importance Nodes',title='Agg_DegCentr_{}_{}'.format(model_name,dataset_name),path='disagreement/Disagreement_Agg_DegCentr_{}_{}.png'.format(model_name,dataset_name))
+    plot_jacard(compute_heatmap(agg_degcentr_score,expl_list),labels=expl_list,title="Agg-DegCentr-CosineDist_{}_{}".format(model_name,dataset_name),path='Disagreement/disagreement/Agg-DegCentr-CosineDist_{}_{}.png'.format(model_name,dataset_name))
+    plot_score(agg_degcentr_score,expl_list,index=index,xlabel=index,ylabel='Avg DegCentr of Importance Nodes',title='Agg_DegCentr_{}_{}'.format(model_name,dataset_name),path='Disagreement/disagreement/Disagreement_Agg_DegCentr_{}_{}.png'.format(model_name,dataset_name))
 
     return expl_dict,expl_list
 
@@ -466,7 +466,7 @@ def get_disagreement_from_ranking(model_name,dataset_name,type,expl_path,ranking
         # TODO
         print("Not implemented yet")
     elif type=='GC':
-        dataset = TUDataset(root='../GNNModels/data/TUDataset', name=dataset_name)
+        dataset = TUDataset(root='GNNModels/data/TUDataset', name=dataset_name)
         index='graph_indices'
 
         
@@ -497,17 +497,17 @@ def get_disagreement_from_ranking(model_name,dataset_name,type,expl_path,ranking
         expl_dict_hubsc,expl_dict_auth=obtain_hits_GC(dataset,top3,expl_list)
 
     node_imp_jaccard,expl_list=get_jaccard(top3,expl_list,index=index)
-    plot_jacard(node_imp_jaccard,expl_list,title="Top3_Disagreement_Node_Imp_{}_{}".format(model_name,dataset_name),path='disagreement/Top3_Disagreement_Node_Imp_{}_{}.png'.format(model_name,dataset_name))
+    plot_jacard(node_imp_jaccard,expl_list,title="Top3_Disagreement_Node_Imp_{}_{}".format(model_name,dataset_name),path='Disagreement/disagreement/Top3_Disagreement_Node_Imp_{}_{}.png'.format(model_name,dataset_name))
     
      
     agg_hub_score=calc_agg_score(expl_dict_hubsc,expl_list,index)
     agg_auth_score=calc_agg_score(expl_dict_auth,expl_list,index)
 
     
-    plot_jacard(compute_heatmap(agg_hub_score,expl_list),labels=expl_list,title="Top3_Agg-HubScore-CosineDist_{}_{}".format(model_name,dataset_name),path='disagreement/Top3_Agg-HubScore-CosineDist_{}_{}.png'.format(model_name,dataset_name))
-    plot_jacard(compute_heatmap(agg_auth_score,expl_list),labels=expl_list,title="Top3_Agg-AuthScore-CosineDist_{}_{}".format(model_name,dataset_name),path='disagreement/Top3_Agg-AuthScore-CosineDist_{}_{}.png'.format(model_name,dataset_name))
+    plot_jacard(compute_heatmap(agg_hub_score,expl_list),labels=expl_list,title="Top3_Agg-HubScore-CosineDist_{}_{}".format(model_name,dataset_name),path='Disagreement/disagreement/Top3_Agg-HubScore-CosineDist_{}_{}.png'.format(model_name,dataset_name))
+    plot_jacard(compute_heatmap(agg_auth_score,expl_list),labels=expl_list,title="Top3_Agg-AuthScore-CosineDist_{}_{}".format(model_name,dataset_name),path='Disagreement/disagreement/Top3_Agg-AuthScore-CosineDist_{}_{}.png'.format(model_name,dataset_name))
 
-    plot_score(agg_hub_score,expl_list,index=index,xlabel=index,ylabel='Top3 Avg Hubscore of Importance Nodes',title='Top3 Agg_Hubscore_{}_{}'.format(model_name,dataset_name),path='disagreement/Top3_Disagreement_Agg_Hubscore_{}_{}.png'.format(model_name,dataset_name))
-    plot_score(agg_auth_score,expl_list,index=index,xlabel=index,ylabel='Top3 Avg Authscore of Importance Nodes',title='Top3 Agg_Auth_{}_{}'.format(model_name,dataset_name),path='disagreement/Top3_Disagreement_Agg_Auth_{}_{}.png'.format(model_name,dataset_name))
+    plot_score(agg_hub_score,expl_list,index=index,xlabel=index,ylabel='Top3 Avg Hubscore of Importance Nodes',title='Top3 Agg_Hubscore_{}_{}'.format(model_name,dataset_name),path='Disagreement/disagreement/Top3_Disagreement_Agg_Hubscore_{}_{}.png'.format(model_name,dataset_name))
+    plot_score(agg_auth_score,expl_list,index=index,xlabel=index,ylabel='Top3 Avg Authscore of Importance Nodes',title='Top3 Agg_Auth_{}_{}'.format(model_name,dataset_name),path='Disagreement/disagreement/Top3_Disagreement_Agg_Auth_{}_{}.png'.format(model_name,dataset_name))
 
     return expl_dict,expl_list

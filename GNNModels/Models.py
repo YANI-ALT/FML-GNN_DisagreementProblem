@@ -114,7 +114,7 @@ def get_model_pretrained(model_name,dataset_name,path=''):
         return None
 
     if path=='':
-        path='checkpoints/'
+        path='GNNModels/checkpoints/'
 
     if(model_name=='GAT'):
         model=GAT(hidden_channels=8, num_features=Datasets_specs[dataset_name]['num_features'],num_classes=Datasets_specs[dataset_name]['num_classes'],heads=8)
