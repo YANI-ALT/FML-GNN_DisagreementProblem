@@ -9,15 +9,15 @@ After cloning the repo, the libraries required to run the code are listed in the
 ### Running the code
 The `train_models.py` file can be used to train GNN models from the command line.
 
-    ```python train_models.py --model GCN --dataset Cora```
+    python train_models.py --model GCN --dataset Cora
 
 The `generated_explanations.py` python script will generate and save explanations.
 
-    ```python generated_explanations.py```
+    python generated_explanations.py
 
 The `generated_disagreement.py` python script will generate all the disagreement metrics and plots for the explanations saved.
 
-    ```python generated_disagreement.py```
+    python generated_disagreement.py
 
 
 The `Tutorial1.ipynb` file contains the example code for training the GNN models.
