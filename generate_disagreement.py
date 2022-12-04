@@ -1,4 +1,4 @@
-from Disagreement_Metric import *
+from Disagreement.Disagreement_Metric import *
 
 # for node classification
 

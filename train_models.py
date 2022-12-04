@@ -4,8 +4,8 @@ from torch_geometric.datasets import TUDataset
 from torch_geometric.datasets import Planetoid
 from torch_geometric.transforms import NormalizeFeatures
 
-from Models import *
-from Train import *
+from GNNModels.Models import *
+from GNNModels.Train import *
 
 
 
@@ -34,10 +34,10 @@ print(model_name)
 print(checkpoint_path)
 
 if dataset_name in ['Cora','CiteSeer']:
-    dataset = Planetoid(root='data/Planetoid', name=dataset_name, transform=NormalizeFeatures())
+    dataset = Planetoid(root='GNNModels/data/Planetoid', name=dataset_name, transform=NormalizeFeatures())
     data = dataset[0]  # Get the first graph object.
 elif dataset_name in ['MUTAG','PROTEINS']:
-    dataset = TUDataset(root='data/TUDataset', name='PROTEINS')
+    dataset = TUDataset(root='GNNModels/data/TUDataset', name='PROTEINS')
 else:
     print("Not a valid dataset name")
 

@@ -373,11 +373,11 @@ def get_disagreement(model_name,dataset_name,type,path):
     index=''
 
     if type=='NC':
-        dataset = Planetoid(root='/tmp/Planetoid', name=dataset_name, transform=NormalizeFeatures())
+        dataset = Planetoid(root='../GNNModels/data/Planetoid', name=dataset_name, transform=NormalizeFeatures())
         data = dataset[0]  # Get the first graph object.
         index='node_indices'
     elif type=='GC':
-        dataset = TUDataset(root='data/TUDataset', name=dataset_name)
+        dataset = TUDataset(root='../GNNModels/data/TUDataset', name=dataset_name)
         index='graph_indices'
 
         
@@ -466,7 +466,7 @@ def get_disagreement_from_ranking(model_name,dataset_name,type,expl_path,ranking
         # TODO
         print("Not implemented yet")
     elif type=='GC':
-        dataset = TUDataset(root='data/TUDataset', name=dataset_name)
+        dataset = TUDataset(root='../GNNModels/data/TUDataset', name=dataset_name)
         index='graph_indices'
 
         

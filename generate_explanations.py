@@ -1,4 +1,4 @@
-from Explainers import *
+from GNNExplainers.Explainers import *
 
 createExplanations(model_name='GCN',dataset_name='Cora',type='NC')
 createExplanations(model_name='GCN',dataset_name='CiteSeer',type='NC')
