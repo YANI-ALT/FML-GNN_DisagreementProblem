@@ -244,6 +244,6 @@ def createExplanations(model_name,dataset_name,type):
     now = datetime.datetime.now()
     timestamp_str=now.strftime('%Y-%m-%dT%H:%M:%S') + ('-%02d' % (now.microsecond / 10000))
     
-    with open("Saved_Explanations/Explanations_{}_{}_{}.pkl".format(model_name,dataset_name,timestamp_str),"wb") as f:
+    with open("GNNExplainers/Saved_Explanations/Explanations_{}_{}_{}.pkl".format(model_name,dataset_name,timestamp_str),"wb") as f:
         # write the python object (dict) to pickle file
         pickle.dump(expl_to_save,f)
