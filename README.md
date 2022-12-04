@@ -35,4 +35,4 @@ The `Models_Summary.ipynb` file contains information on the models (test/train a
 5. Graph XAI (https://github.com/mims-harvard/GraphXAI)
 
 
-This project was done by, as part of the Fair and Transparent Machine Learning Course at UT Austin. 
+This project was done by [Anubhav Goel](https://github.com/anubhavgoel26) , [Devyani Maladkar](https://github.com/YANI-ALT), [Shray Mathur](https://github.com/Shray64) and [Shagun Gupta](https://github.com/Shagun-G), as part of the Fair and Transparent Machine Learning Course at UT Austin. 
