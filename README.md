@@ -3,7 +3,7 @@
 This repository contains the code for studying the disagreement problem for Graph Neural Networks.
 
 ### Installation
-After cloning the repo, the libraries required to run the code are listed in the environment.yml file.
+After cloning the repo, the libraries required to run the code are listed in the environment.yml file. We recommedn using python8.1 for a stable implementation of the libraries used.
 
 
 ### Running the code
