@@ -15,9 +15,9 @@ The `generated_explanations.py` python script will generate and save explanation
 
     python generated_explanations.py
 
-The `generated_disagreement.py` python script will generate all the disagreement metrics and plots for the explanations saved.
+The `generate_disagreement.py` python script will generate all the disagreement metrics and plots for the explanations saved.
 
-    python generated_disagreement.py
+    python generate_disagreement.py
 
 
 The `Tutorial1.ipynb` file contains the example code for training the GNN models.
