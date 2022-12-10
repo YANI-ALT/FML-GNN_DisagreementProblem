@@ -11,7 +11,7 @@ The `train_models.py` file can be used to train GNN models from the command line
 
     python train_models.py --model GCN --dataset Cora
 
-The `generated_explanations.py` python script will generate and save explanations.
+The `generated_explanations.py` python script will generate and save explanations in the Disagreement folder.
 
     python generated_explanations.py
 
