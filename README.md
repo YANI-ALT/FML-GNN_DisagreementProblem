@@ -10,6 +10,8 @@ After cloning the repo, the libraries required to run the code are listed in the
 The `train_models.py` file can be used to train GNN models from the command line.
 
     python train_models.py --model GCN --dataset Cora
+    
+GCN and GAT model arguements are applicable for Cora and Citeseer node classification datasets. GCN_3L and GraphConv model arguements are applicable for MUTAG and PROTEINS graph classification datasets.
 
 The `generated_explanations.py` python script will generate and save explanations in the Disagreement folder.
 
